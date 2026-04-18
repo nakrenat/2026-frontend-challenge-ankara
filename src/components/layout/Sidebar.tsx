@@ -13,6 +13,7 @@ interface SidebarProps {
   searchQuery: string;
   onSelect: (id: string) => void;
   onSearch: (q: string) => void;
+  showLeaderboard?: boolean;
 }
 
 export function Sidebar({
@@ -23,6 +24,7 @@ export function Sidebar({
   searchQuery,
   onSelect,
   onSearch,
+  showLeaderboard = true,
 }: SidebarProps) {
   return (
     <aside className="flex h-full w-full shrink-0 flex-col border-r border-slate-700 bg-slate-900 lg:w-72">
@@ -55,7 +57,7 @@ export function Sidebar({
         )}
       </div>
 
-      {!isLoading && !searchQuery && (
+      {showLeaderboard && !isLoading && !searchQuery && (
         <div className="shrink-0 border-t border-slate-700 p-3">
           <SuspectLeaderboard people={allPeople} onSelect={onSelect} />
         </div>

@@ -13,32 +13,56 @@ import { SuspicionBadge } from '../common/Badge';
 
 const EVENT_CONFIG: Record<
   EventType,
-  { icon: React.ReactNode; label: string; color: string }
+  { icon: React.ReactNode; label: string; color: string; chipClass: string }
 > = {
-  checkin: { icon: <LogIn size={13} />, label: 'Check-in', color: 'text-blue-400' },
+  checkin: {
+    icon: <LogIn size={12} />,
+    label: 'Check-in',
+    color: 'text-blue-300',
+    chipClass: 'bg-blue-900/40 text-blue-300 border-blue-700/60',
+  },
   message_sent: {
-    icon: <MessageSquare size={13} />,
+    icon: <MessageSquare size={12} />,
     label: 'Sent',
-    color: 'text-green-400',
+    color: 'text-green-300',
+    chipClass: 'bg-green-900/40 text-green-300 border-green-700/60',
   },
   message_received: {
-    icon: <MessageSquare size={13} />,
+    icon: <MessageSquare size={12} />,
     label: 'Received',
-    color: 'text-slate-400',
+    color: 'text-slate-300',
+    chipClass: 'bg-slate-700/60 text-slate-300 border-slate-600/70',
   },
-  sighting_of: { icon: <Eye size={13} />, label: 'Sighted', color: 'text-yellow-400' },
-  sighting_with: {
-    icon: <Eye size={13} />,
-    label: 'Seen with',
+  sighting_of: {
+    icon: <Eye size={12} />,
+    label: 'Sighted',
     color: 'text-yellow-300',
+    chipClass: 'bg-yellow-900/35 text-yellow-300 border-yellow-700/60',
   },
-  note_authored: { icon: <FileText size={13} />, label: 'Note', color: 'text-purple-400' },
-  note_mentioned: {
-    icon: <FileText size={13} />,
-    label: 'Mentioned',
+  sighting_with: {
+    icon: <Eye size={12} />,
+    label: 'Seen with',
+    color: 'text-yellow-200',
+    chipClass: 'bg-yellow-900/30 text-yellow-200 border-yellow-700/60',
+  },
+  note_authored: {
+    icon: <FileText size={12} />,
+    label: 'Note',
     color: 'text-purple-300',
+    chipClass: 'bg-purple-900/35 text-purple-300 border-purple-700/60',
   },
-  tip: { icon: <Megaphone size={13} />, label: 'Anonymous Tip', color: 'text-red-400' },
+  note_mentioned: {
+    icon: <FileText size={12} />,
+    label: 'Mentioned',
+    color: 'text-purple-200',
+    chipClass: 'bg-purple-900/30 text-purple-200 border-purple-700/60',
+  },
+  tip: {
+    icon: <Megaphone size={12} />,
+    label: 'Anonymous Tip',
+    color: 'text-red-300',
+    chipClass: 'bg-red-900/35 text-red-300 border-red-700/60',
+  },
 };
 
 const BORDER_COLOR: Record<SuspicionLevel, string> = {
@@ -50,6 +74,7 @@ const BORDER_COLOR: Record<SuspicionLevel, string> = {
 
 interface TimelineItemProps {
   event: TimelineEvent;
+  index: number;
   isLast: boolean;
   isHovered: boolean;
   onHoverEvent?: (eventId: string | null) => void;
@@ -58,6 +83,7 @@ interface TimelineItemProps {
 
 function TimelineItem({
   event,
+  index,
   isLast,
   isHovered,
   onHoverEvent,
@@ -66,10 +92,11 @@ function TimelineItem({
   const cfg = EVENT_CONFIG[event.type];
   return (
     <div
-      className="flex gap-3"
+      className="timeline-item-enter flex gap-3"
       onMouseEnter={() => onHoverEvent?.(event.id)}
       onMouseLeave={() => onHoverEvent?.(null)}
       ref={(el) => registerRef?.(event.id, el)}
+      style={{ animationDelay: `${Math.min(index * 45, 360)}ms` }}
     >
       <div className="flex flex-col items-center">
         <div
@@ -86,11 +113,16 @@ function TimelineItem({
         className={`mb-4 min-w-0 flex-1 rounded-lg border p-3 transition-all ${BORDER_COLOR[event.suspicionLevel]} ${
           isHovered
             ? 'bg-slate-700/80 ring-1 ring-cyan-400/70 shadow-[0_0_20px_rgba(34,211,238,0.20)]'
-            : 'bg-slate-800/50'
+            : 'bg-slate-800/50 hover:bg-slate-800/70'
         }`}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
+          <span
+            className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${cfg.chipClass}`}
+          >
+            {cfg.icon}
+            {cfg.label}
+          </span>
           {event.suspicionLevel !== 'none' && (
             <SuspicionBadge level={event.suspicionLevel} size="sm" />
           )}
@@ -139,6 +171,7 @@ export function Timeline({ events, hoveredEventId, onHoverEvent }: TimelineProps
         <TimelineItem
           key={event.id}
           event={event}
+          index={i}
           isLast={i === events.length - 1}
           isHovered={hoveredEventId === event.id}
           onHoverEvent={onHoverEvent}

@@ -23,23 +23,12 @@ export function MainPanel({
       <div className="flex h-full items-center justify-center p-8">
         <div className="w-full max-w-md rounded-lg border border-red-700 bg-red-950/30 p-6">
           <p className="text-sm font-semibold text-red-400">Failed to fetch case files</p>
-          <p className="mt-2 rounded bg-slate-900 px-3 py-2 font-mono text-xs text-slate-300">
-            {error}
-          </p>
+          <p className="mt-2 rounded bg-slate-900 px-3 py-2 font-mono text-xs text-slate-300">{error}</p>
           <div className="mt-4 space-y-1 text-xs text-slate-500">
             <p>Checklist:</p>
-            <p>
-              1. <code className="text-slate-400">.env.local</code> file exists in the project
-              root
-            </p>
-            <p>
-              2. It contains{' '}
-              <code className="text-slate-400">VITE_JOTFORM_API_KEY=your_key</code>
-            </p>
-            <p>
-              3. Dev server was <strong className="text-slate-400">restarted</strong> after
-              creating the file
-            </p>
+            <p>1. <code className="text-slate-400">.env.local</code> file exists in the project root</p>
+            <p>2. It contains <code className="text-slate-400">VITE_JOTFORM_API_KEY=your_key</code></p>
+            <p>3. Dev server was <strong className="text-slate-400">restarted</strong> after creating the file</p>
             <p>4. Check the browser console (F12) for network errors</p>
           </div>
         </div>

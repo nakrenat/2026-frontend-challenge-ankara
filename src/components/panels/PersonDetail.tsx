@@ -9,6 +9,8 @@ import {
   Clock,
   AlertTriangle,
   Filter,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import type { EventType, Person } from '../../types/domain';
 import { SuspicionBadge, UrgencyBadge } from '../common/Badge';
@@ -53,6 +55,7 @@ interface Props {
 
 export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
+  const [isTimelineFocus, setIsTimelineFocus] = useState(false);
 
   const suspiciousEvents = person.timeline.filter(
     (e) => e.suspicionLevel === 'high' || e.suspicionLevel === 'medium',
@@ -82,11 +85,16 @@ export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
         }`}
       >
         <div className="flex items-start justify-between gap-3">
-          <div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-700 text-lg font-bold text-slate-100">
+              {person.isMainSubject ? '🐾' : person.name.slice(0, 2).toUpperCase()}
+            </div>
+            <div>
             <h2 className="text-xl font-bold text-slate-100">{person.name}</h2>
             {person.isMainSubject && (
               <p className="text-xs text-blue-400">★ Main Subject — Missing Person</p>
             )}
+          </div>
           </div>
           <div className="flex flex-col items-end gap-1">
             <SuspicionBadge level={person.suspicionLevel} />
@@ -96,6 +104,13 @@ export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
                 /100
               </span>
             )}
+            <button
+              onClick={() => setIsTimelineFocus((prev) => !prev)}
+              className="mt-1 inline-flex items-center gap-1 rounded bg-slate-800 px-2 py-1 text-[10px] font-medium text-slate-300 transition-colors hover:bg-slate-700"
+            >
+              {isTimelineFocus ? <Minimize2 size={11} /> : <Maximize2 size={11} />}
+              {isTimelineFocus ? 'Normal View' : 'Focus Timeline'}
+            </button>
           </div>
         </div>
 
@@ -114,7 +129,7 @@ export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
           </div>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        {!isTimelineFocus && <div className="mt-4 flex flex-wrap gap-2">
           <StatPill icon={<LogIn size={14} />} count={person.checkins.length} label="Check-ins" />
           <StatPill
             icon={<MessageSquare size={14} />}
@@ -133,10 +148,10 @@ export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
             label="Notes"
           />
           <StatPill icon={<Megaphone size={14} />} count={person.tips.length} label="Tips" />
-        </div>
+        </div>}
       </div>
 
-      {suspiciousEvents.length > 0 && (
+      {!isTimelineFocus && suspiciousEvents.length > 0 && (
         <div className="shrink-0 border-b border-red-900/50 bg-red-950/20 px-5 py-3">
           <div className="flex items-center gap-2 text-red-400">
             <AlertTriangle size={14} />
@@ -191,6 +206,9 @@ export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
       <div className="flex-1 overflow-y-auto px-5 py-4">
         <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
           Chain of Events
+          {activeFilter !== 'all' && (
+            <span className="ml-2 text-slate-600">— filtered by {FILTER_LABELS[activeFilter].label}</span>
+          )}
         </h3>
         <Timeline
           events={filteredEvents}

@@ -132,8 +132,21 @@ export function useInvestigation() {
     dispatch({ type: 'SET_SEARCH', payload: q });
 
   const filteredPeople = state.people.filter((p) => {
-    if (!state.searchQuery) return true;
-    return p.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+    const q = state.searchQuery.trim().toLowerCase();
+    if (!q) return true;
+
+    const searchableText = [
+      p.name,
+      p.lastSeenLocation ?? '',
+      p.lastSeenTime ?? '',
+      ...p.timeline.map(
+        (e) => `${e.description} ${e.location} ${e.relatedPeople.join(' ')} ${e.type}`,
+      ),
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return searchableText.includes(q);
   });
 
   const selectedPerson = state.people.find((p) => p.id === state.selectedPersonId) ?? null;

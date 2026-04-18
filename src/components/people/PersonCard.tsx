@@ -24,11 +24,13 @@ export function PersonCard({ person, isSelected, onClick }: PersonCardProps) {
       ? 'border-slate-500'
       : 'border-slate-700';
 
+  const avatarLabel = person.isMainSubject ? '🐾' : initials;
+
   return (
     <button
       onClick={onClick}
-      className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-slate-700/60 ${borderColor} ${
-        isSelected ? 'bg-slate-700/60' : 'bg-slate-800/60'
+      className={`w-full rounded-lg border p-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-700/60 hover:shadow-[0_10px_24px_rgba(2,6,23,0.45)] ${borderColor} ${
+        isSelected ? 'bg-slate-700/60 shadow-[0_8px_20px_rgba(15,23,42,0.45)]' : 'bg-slate-800/60'
       }`}
     >
       <div className="flex items-start gap-3">
@@ -41,7 +43,7 @@ export function PersonCard({ person, isSelected, onClick }: PersonCardProps) {
               : 'bg-slate-600 text-slate-200'
           }`}
         >
-          {initials}
+          {avatarLabel}
         </div>
 
         <div className="min-w-0 flex-1">
@@ -90,6 +92,21 @@ export function PersonCard({ person, isSelected, onClick }: PersonCardProps) {
           </div>
         )}
       </div>
+
+      {person.suspicionScore > 0 && (
+        <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-slate-700">
+          <div
+            className={`h-full rounded-full transition-all ${
+              person.suspicionScore >= 50
+                ? 'bg-red-500'
+                : person.suspicionScore >= 25
+                ? 'bg-orange-500'
+                : 'bg-yellow-600'
+            }`}
+            style={{ width: `${person.suspicionScore}%` }}
+          />
+        </div>
+      )}
     </button>
   );
 }
