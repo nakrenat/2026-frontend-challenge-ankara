@@ -1,31 +1,48 @@
-# Jotform Frontend Challenge Project
+# Missing Podo: The Ankara Case
 
-## User Information
-Please fill in your information after forking this repository:
+## Overview
+This repository contains a staged implementation of an investigation dashboard for the Jotform frontend challenge scenario.
+The product goal is to merge multiple form sources into a person-centric investigation experience.
 
-- **Name**: [Your Name]
+## Commit Strategy
+The project is intentionally split into focused commits instead of a single large push:
+1. Foundation and secure environment setup.
+2. Data engine and person mapping model.
+3. Core investigation UI.
+4. Map interactions and synchronization.
+5. Mobile behavior and responsive architecture.
+6. Error handling and resilience improvements.
+7. Documentation finalization.
 
-## Project Description
-[Add a brief description of your project here]
+## Foundation Scope (Commit 1)
+This first commit includes:
+- Vite + React + TypeScript project setup.
+- Tailwind integration.
+- Strict TypeScript compiler configuration.
+- Environment variable template.
+- Git ignore rules to prevent local secret leakage.
+
+## Secure Environment Setup
+Create a local environment file from the template:
+
+```bash
+cp .env.example .env.local
+```
+
+Then set your key locally:
+
+```env
+VITE_JOTFORM_API_KEY=your_jotform_api_key_here
+```
+
+Important:
+- Never commit `.env.local`.
+- Never hardcode API keys in source files.
 
 ## Getting Started
-[Add instructions for setting up and running the project]
+```bash
+npm install
+npm run dev
+```
 
-# 🚀 Challenge Duyurusu
-
-## 📅 Tarih ve Saat
-Cumartesi günü başlama saatinden itibaren üç saattir.
-
-## 🎯 Challenge Konsepti
-Bu challenge'da, size özel hazırlanmış bir senaryo üzerine web uygulaması geliştirmeniz istenecektir. Challenge başlangıcında senaryo detayları paylaşılacaktır.Katılımcılar, verilen GitHub reposunu fork ederek kendi geliştirme ortamlarını oluşturacaklardır.
-
-## 📦 GitHub Reposu
-Challenge için kullanılacak repo: https://github.com/cemjotform/2026-frontend-challenge-ankara
-
-## 🛠️ Hazırlık Süreci
-1. GitHub reposunu fork edin
-2. Tercih ettiğiniz framework ile geliştirme ortamınızı hazırlayın
-3. Hazırladığınız setup'ı fork ettiğiniz repoya gönderin
-
-## 💡 Önemli Notlar
-- Katılımcılar kendi tercih ettikleri framework'leri kullanabilirler
+The first commit is intentionally minimal and stable so later features can be reviewed incrementally.
