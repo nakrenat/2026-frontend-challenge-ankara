@@ -5,12 +5,30 @@
 
 ---
 
+## Prerequisites
+
+- Node.js 18+ (recommended: Node.js 20+)
+- npm 9+
+
+---
+
 ## Run Locally
 
 ```bash
 npm install
-cp .env.example .env.local
 npm run dev
+```
+
+Create your local env file:
+
+```bash
+# macOS / Linux
+cp .env.example .env.local
+```
+
+```powershell
+# Windows
+copy .env.example .env.local
 ```
 
 Open [http://localhost:5173](http://localhost:5173)
@@ -67,6 +85,18 @@ Data flow:
 - Retry with exponential backoff for retryable API failures (429 / 5xx)
 - Partial-load strategy with `Promise.allSettled` (one source can fail without crashing whole UI)
 - Clear error panel with recovery checklist
+
+### Known Issue
+
+- If Jotform API rate limiting occurs (`429`), wait briefly and retry; the app already applies automatic backoff for retryable requests.
+
+---
+
+## Quick Validation
+
+- App opens at `http://localhost:5173` and initial data loads.
+- Selecting a person in the sidebar updates the detail panel.
+- Hovering map markers and timeline events highlights/syncs both sides.
 
 ---
 
