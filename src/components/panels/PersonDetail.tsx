@@ -47,9 +47,11 @@ function StatPill({ icon, count, label }: { icon: React.ReactNode; count: number
 
 interface Props {
   person: Person;
+  hoveredEventId?: string | null;
+  onHoverEvent?: (eventId: string | null) => void;
 }
 
-export function PersonDetail({ person }: Props) {
+export function PersonDetail({ person, hoveredEventId, onHoverEvent }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
 
   const suspiciousEvents = person.timeline.filter(
@@ -190,7 +192,11 @@ export function PersonDetail({ person }: Props) {
         <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
           Chain of Events
         </h3>
-        <Timeline events={filteredEvents} />
+        <Timeline
+          events={filteredEvents}
+          hoveredEventId={hoveredEventId}
+          onHoverEvent={onHoverEvent}
+        />
       </div>
     </div>
   );

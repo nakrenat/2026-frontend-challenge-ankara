@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import {
   LogIn,
   MessageSquare,
@@ -50,15 +51,31 @@ const BORDER_COLOR: Record<SuspicionLevel, string> = {
 interface TimelineItemProps {
   event: TimelineEvent;
   isLast: boolean;
+  isHovered: boolean;
+  onHoverEvent?: (eventId: string | null) => void;
+  registerRef?: (eventId: string, el: HTMLDivElement | null) => void;
 }
 
-function TimelineItem({ event, isLast }: TimelineItemProps) {
+function TimelineItem({
+  event,
+  isLast,
+  isHovered,
+  onHoverEvent,
+  registerRef,
+}: TimelineItemProps) {
   const cfg = EVENT_CONFIG[event.type];
   return (
-    <div className="flex gap-3">
+    <div
+      className="flex gap-3"
+      onMouseEnter={() => onHoverEvent?.(event.id)}
+      onMouseLeave={() => onHoverEvent?.(null)}
+      ref={(el) => registerRef?.(event.id, el)}
+    >
       <div className="flex flex-col items-center">
         <div
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border bg-slate-900 ${BORDER_COLOR[event.suspicionLevel]} ${cfg.color}`}
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border bg-slate-900 ${BORDER_COLOR[event.suspicionLevel]} ${cfg.color} ${
+            isHovered ? 'ring-2 ring-cyan-400/70 shadow-[0_0_12px_rgba(34,211,238,0.45)]' : ''
+          }`}
         >
           {cfg.icon}
         </div>
@@ -66,7 +83,11 @@ function TimelineItem({ event, isLast }: TimelineItemProps) {
       </div>
 
       <div
-        className={`mb-4 min-w-0 flex-1 rounded-lg border bg-slate-800/50 p-3 ${BORDER_COLOR[event.suspicionLevel]}`}
+        className={`mb-4 min-w-0 flex-1 rounded-lg border p-3 transition-all ${BORDER_COLOR[event.suspicionLevel]} ${
+          isHovered
+            ? 'bg-slate-700/80 ring-1 ring-cyan-400/70 shadow-[0_0_20px_rgba(34,211,238,0.20)]'
+            : 'bg-slate-800/50'
+        }`}
       >
         <div className="flex flex-wrap items-center gap-2">
           <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
@@ -94,9 +115,20 @@ function TimelineItem({ event, isLast }: TimelineItemProps) {
 
 interface TimelineProps {
   events: TimelineEvent[];
+  hoveredEventId?: string | null;
+  onHoverEvent?: (eventId: string | null) => void;
 }
 
-export function Timeline({ events }: TimelineProps) {
+export function Timeline({ events, hoveredEventId, onHoverEvent }: TimelineProps) {
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (!hoveredEventId) return;
+    const target = itemRefs.current[hoveredEventId];
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [hoveredEventId]);
+
   if (events.length === 0) {
     return <p className="py-8 text-center text-sm text-slate-500">No timeline events recorded.</p>;
   }
@@ -104,7 +136,16 @@ export function Timeline({ events }: TimelineProps) {
   return (
     <div className="pt-2">
       {events.map((event, i) => (
-        <TimelineItem key={event.id} event={event} isLast={i === events.length - 1} />
+        <TimelineItem
+          key={event.id}
+          event={event}
+          isLast={i === events.length - 1}
+          isHovered={hoveredEventId === event.id}
+          onHoverEvent={onHoverEvent}
+          registerRef={(eventId, el) => {
+            itemRefs.current[eventId] = el;
+          }}
+        />
       ))}
     </div>
   );

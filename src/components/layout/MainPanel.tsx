@@ -7,9 +7,17 @@ interface MainPanelProps {
   selectedPerson: Person | null;
   isLoading: boolean;
   error: string | null;
+  hoveredEventId?: string | null;
+  onHoverEvent?: (eventId: string | null) => void;
 }
 
-export function MainPanel({ selectedPerson, isLoading, error }: MainPanelProps) {
+export function MainPanel({
+  selectedPerson,
+  isLoading,
+  error,
+  hoveredEventId,
+  onHoverEvent,
+}: MainPanelProps) {
   if (error) {
     return (
       <div className="flex h-full items-center justify-center p-8">
@@ -58,5 +66,11 @@ export function MainPanel({ selectedPerson, isLoading, error }: MainPanelProps) 
     );
   }
 
-  return <PersonDetail person={selectedPerson} />;
+  return (
+    <PersonDetail
+      person={selectedPerson}
+      hoveredEventId={hoveredEventId}
+      onHoverEvent={onHoverEvent}
+    />
+  );
 }
